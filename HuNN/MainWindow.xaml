@@ -1,0 +1,122 @@
+﻿<Window x:Class="HuNN.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HuNN"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"       
+      
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"        
+        Title="HuNN" Height="1080" Width="1920" WindowState="Maximized">
+    <Window.Resources>
+        <local:DecimalConverter   x:Key="decimalConverter"  />
+    </Window.Resources>
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Height="40" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+            <Button Width="60" Height="30" Margin="3" Name="btnNew" Click="New_Click">New NN</Button>
+            <Button Width="60" Height="30" Margin="3" Name="btnSave" Click="Save_Click" IsEnabled="False">Save NN</Button>
+            <Button Width="60" Height="30" Margin="3" Name="btnLoad" Click="Load_Click">Load NN</Button>
+            <Button Width="100" Height="30" Margin="3" Name="btnLoadTrainData" Click="LoadTrainData_Click" IsEnabled="False">Load TrainData</Button>
+            <Button Width="100" Height="30" Margin="3" Name="btnTrainOneStep" Click="TrainOneStep_Click" IsEnabled="False">Train OneStep</Button>
+            <Button Width="90" Height="30" Margin="3" Name="btnTrain" Click="Train_Click" IsEnabled="False">Train</Button>
+            <Button Width="90" Height="30" Margin="3" Name="btnStopTrain" Click="StopTrain_Click" IsEnabled="False">Stop Train</Button>
+            <Button Width="100" Height="30" Margin="3" Name="btnLoadTestData" IsEnabled="False" Click="BtnLoadTestData_Click">Load TestData</Button>
+            <Button Width="90" Height="30" Margin="3" Name="btnTest" Click="Test_Click" IsEnabled="False">Test</Button>
+            <Button Width="100" Height="30" Margin="3" Name="btnDatasetTools" Click="BtnDatasetTools_Click" >Dataset Tools</Button>
+
+            <CheckBox Name="checkboxTrainWithTest" VerticalContentAlignment="Center" Margin="5" Click="CheckboxTrainWithTest_Click">Test While Trainning</CheckBox>
+            <Label  VerticalAlignment="Center" Margin="3">LearnRate:</Label>
+            <TextBox Width="50" Height="30" Margin="3" IsEnabled="False" Name="txtLearnRate"  VerticalContentAlignment="Center" KeyDown="TxtLearnRate_KeyDown" Text="{Binding Path=LearnRate, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource decimalConverter}}"></TextBox>
+            <Label  VerticalAlignment="Center" Margin="3">Momentum:</Label>
+            <TextBox Width="50" Height="30" Margin="3" IsEnabled="False" Name="txtMomentum" VerticalContentAlignment="Center" KeyDown="TxtMomentum_KeyDown" Text="{Binding Path=Momentum,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource decimalConverter}}"></TextBox>
+            <Label  VerticalAlignment="Center" Margin="3">NN Structure:</Label>
+            <Label  VerticalAlignment="Center" Margin="3" Name="txtNNStruct" Width="400" Height="30" VerticalContentAlignment="Center" Content="{Binding Path=NNStruct,Mode=OneWay}"></Label>
+        </StackPanel>
+        <Border DockPanel.Dock="Bottom" Height="250">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                    <GroupBox Header="Log" Margin="10,0,10,0">
+                        <ScrollViewer Height="200" Width="400">
+                            <TextBlock Name="Log"/>
+                        </ScrollViewer>
+                    </GroupBox>
+                    <GroupBox Header="CPU Usage" Margin="10,0,10,0" >
+                        <lvc:CartesianChart Name="chartCpuUsage" Series="{Binding SeriesCollectionCPUUsage}" LegendLocation="Bottom" Width="400" MouseDoubleClick="ChartError_MouseDoubleClick">
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis Title="Percent" LabelFormatter="{Binding TimeElapse}"></lvc:Axis>
+                            </lvc:CartesianChart.AxisY>
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis Title="Time" Labels="{Binding CPUUsagePercent}"></lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+                        </lvc:CartesianChart>
+                    </GroupBox>
+
+                    <GroupBox Header="Error Epoch" Margin="10,0,10,0" Width="Auto">
+                        <lvc:CartesianChart Name="chartErrorEpoch" Series="{Binding SeriesCollectionEpoch}" LegendLocation="Bottom" Width="400" MouseDoubleClick="ChartError_MouseDoubleClick">
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis Title="Error" LabelFormatter="{Binding ErrorEpoch}"></lvc:Axis>
+                            </lvc:CartesianChart.AxisY>
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis Title="Epoch" Labels="{Binding EpochNum}"></lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+                        </lvc:CartesianChart>
+                    </GroupBox>
+
+                    <GroupBox Header="Accuracy" Margin="10,0,10,0" Width="Auto">
+                        <lvc:CartesianChart Name="chartAccuracy" Series="{Binding SeriesCollectionAccuracy}" LegendLocation="Bottom" Width="400" MouseDoubleClick="ChartError_MouseDoubleClick">
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis Title="Accury" LabelFormatter="{Binding Accuracy}"></lvc:Axis>
+                            </lvc:CartesianChart.AxisY>
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis Title="Epoch" Labels="{Binding EpochNum}"></lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+                        </lvc:CartesianChart>
+                    </GroupBox>
+                    
+
+                </StackPanel>
+              
+                <StatusBar Height="30" VerticalContentAlignment="Center">
+                    <Label HorizontalAlignment="Center" VerticalContentAlignment="Center">Trained Sample number：</Label>
+                    <Label Width="50" Height="28" IsEnabled="False" VerticalContentAlignment="Center" Name="TrainNum"></Label>
+                    <Label HorizontalAlignment="Center" VerticalContentAlignment="Center">Epoch Number：</Label>
+                    <Label Width="50" Height="28" IsEnabled="False" VerticalContentAlignment="Center" Name="TrainEpocNum"></Label>                  
+                  
+                    <Label HorizontalAlignment="Center" VerticalAlignment="Center" >Total Error：</Label>
+                    <Label Width="100" Height="28" IsEnabled="False" VerticalContentAlignment="Center" Name="TotalError"></Label>
+                    
+                    <Label HorizontalAlignment="Center" VerticalAlignment="Center">Time Consumed：</Label>
+                    <Label Width="100" Height="28" IsEnabled="False" VerticalContentAlignment="Center" Name="TrainElapseTime"></Label>
+                </StatusBar>
+            </StackPanel>
+        </Border>
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <GroupBox Grid.Column="0" Header="NN Detail" Margin="5">
+                <DockPanel>
+                    <Button Name="btnShowNNTreeView" DockPanel.Dock="Top" Click="BtnShowNNTreeView_Click" Height="30" Width="150" Margin="5">Show Network Struct</Button>
+                    <TreeView Name="treeViewNN"></TreeView>
+                </DockPanel>
+               
+            </GroupBox>
+            <GridSplitter Grid.Column="1"></GridSplitter>
+            <GroupBox Grid.Column="1" Header="NN visualization" Margin="5">
+                <DockPanel>
+                    <Button Name="btnShowNNPic" DockPanel.Dock="Top" Click="BtnShowNNPic_Click" Height="30" Width="200" Margin="5">Show Network Struct in Canvas</Button>
+
+                    <Canvas Name="OutCanvas">
+                        <Image Name="DisplayImage"/>
+                    </Canvas>
+
+                </DockPanel>
+            </GroupBox>
+        </Grid>
+       
+    </DockPanel>
+</Window>
