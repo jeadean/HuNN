@@ -1,6 +1,6 @@
 # HuNN
 A WPF+C# BP NeuralNetwork implementation
-
+![image](https://github.com/jeadean/HuNN/blob/master/ScreenShot.png)
 This work is done to learn BPNN and WPF.
 The core NN code is derived from https://github.com/trentsartain/Neural-Network, this is a great example to learn BPNN.
 
